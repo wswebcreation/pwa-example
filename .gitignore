@@ -1,0 +1,29 @@
+# Logs
+#
+logs
+
+# node.js
+#
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Covers JetBrains IDEs
+#
+.idea/
+
+# vscode
+#
+.vscode/
+
+# OSX
+#
+.DS_Store
+
+
+# WebdriverIO files
+#
+.tmp/
+apps/
