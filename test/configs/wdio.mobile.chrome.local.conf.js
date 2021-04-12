@@ -1,4 +1,4 @@
-const { config } = require('./wdio.shared.conf');
+const { config } = require('./wdio.shared.local.appium.conf');
 
 // ==================
 // Specify Test Files
@@ -14,12 +14,15 @@ config.capabilities = [
     {
         // The defaults you need to have in your config
         automationName: 'UIAutomator2',
-        deviceName: 'Pixel3_9.0',
+        deviceName: 'Pixel_3_10.0',
         platformName: 'Android',
-        platformVersion: '9.0',
+        platformVersion: '10.0',
         orientation: 'PORTRAIT',
         browserName: 'chrome',
         maxInstances: 1,
+        // nativeWebScreenshot: true
+        // noReset: true,
+        // fullReset: false
     },
 ];
 

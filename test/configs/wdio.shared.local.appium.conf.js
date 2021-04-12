@@ -9,6 +9,10 @@ config.services = config.services.concat([
     {
       // This will use the globally installed version of Appium
       command: 'appium',
+      args: {
+        // Auto download ChromeDriver
+        relaxedSecurity: true,
+      },
     },
 
   ],
