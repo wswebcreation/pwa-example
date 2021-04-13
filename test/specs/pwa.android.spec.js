@@ -10,14 +10,11 @@ describe('An Android PWA', () => {
         openPwa();
     });
 
-    // beforeEach(()=> openPwa());
-    // afterEach(()=> driver.background(-1));
-
     beforeEach(() => {
         // Clean the session
         driver.deleteCookies('session-username')
         driver.execute('localStorage.clear()')
-        driver.refresh();
+        driver.url('');
     });
 
     it('should be able log in', () => {
@@ -67,7 +64,19 @@ function storeAndroidPwa(){
     // Open the menu
 
     ////////////////////////////////////////////////////////////////////////////////////
+    // Android 11
+    // accessibility id   =   More options
+    // xpath              =   //android.widget.ImageButton[@content-desc="More options"]
+    ////////////////////////////////////////////////////////////////////////////////////
     // Android 10
+    // accessibility id   =   More options
+    // xpath              =   //android.widget.ImageButton[@content-desc="More options"]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 9.0
+    // accessibility id   =   More options
+    // xpath              =   //android.widget.ImageButton[@content-desc="More options"]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 8.1
     // accessibility id   =   More options
     // xpath              =   //android.widget.ImageButton[@content-desc="More options"]
     ////////////////////////////////////////////////////////////////////////////////////
@@ -75,34 +84,89 @@ function storeAndroidPwa(){
 
     // Click on add to home
     ////////////////////////////////////////////////////////////////////////////////////
+    // Android 11
+    // accessibility id   =   Add to Home screen
+    // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
+    ////////////////////////////////////////////////////////////////////////////////////
     // Android 10
+    // accessibility id   =   Add to Home screen
+    // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 10
+    // accessibility id   =   Add to Home screen
+    // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 8.1
     // accessibility id   =   Add to Home screen
     // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
     ////////////////////////////////////////////////////////////////////////////////////
     $('~Add to Home screen').click();
 
     // Wait for the pop-up
+    // @TODO: we can change the name, but the cursor is in the wrong place
+    // Check if we can clear it?
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 11
+    // Not possible
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 10
+    // Not possible
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 9.0
+    // Not possible
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 8.1
+    // xpath    =   //android.widget.EditText[@resource-id="com.android.chrome:id/text"]
+    ////////////////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 11
+    // xpath              =   //android.widget.Button[contains(@text, "Add")]
     ////////////////////////////////////////////////////////////////////////////////////
     // Android 10
     // xpath              =   //android.widget.Button[contains(@text, "Add")]
     ////////////////////////////////////////////////////////////////////////////////////
-    $('//android.widget.Button[contains(@text, "Add")]').waitForDisplayed({timeout:DEFAULT_TIMEOUT});
-    $('//android.widget.Button[contains(@text, "Add")]').click();
+    // Android 9.1
+    // xpath              =   //android.widget.Button[contains(@text, "ADD")]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 8.1
+    // xpath              =   //android.widget.Button[contains(@text, "ADD")]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Diff between Android 11/10/9.0/8.1 is that it's `Add` vs. `ADD`
+    // textContains seems to be case-insensitive, although the docs say otherwise
+    // https://developer.android.com/reference/androidx/test/uiautomator/UiSelector#textcontains
+    const addButtonSelector = 'new UiSelector().className("android.widget.Button").textContains("Add")'
+    $(`android=${addButtonSelector}`).waitForDisplayed({timeout:DEFAULT_TIMEOUT});
+    $(`android=${addButtonSelector}`).click();
 
     ////////////////////////////////////////////////////////////////////////////////////
-    // Android 10
-    // xpath              =   //android.widget.Button[contains(@text, "Add automatically")]
+    // Android 11
+    // xpath    =   //android.widget.Button[contains(@text, "Add automatically")]
     ////////////////////////////////////////////////////////////////////////////////////
-    $('//android.widget.Button[contains(@text, "Add automatically")]').waitForDisplayed({timeout:DEFAULT_TIMEOUT});
-    $('//android.widget.Button[contains(@text, "Add automatically")]').click();
+    // Android 10
+    // xpath    =   //android.widget.Button[contains(@text, "Add automatically")]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 9.0
+    // xpath    =   //android.widget.Button[contains(@text, "ADD AUTOMATICALLY")]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Android 8.1
+    // xpath    =   //android.widget.Button[contains(@text, "ADD AUTOMATICALLY")]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Diff between Android 11/10/9.0/8.1 is that it's `Add automatically` vs. `ADD AUTOMATICALLY`
+    // textContains seems to be case-insensitive, although the docs say otherwise
+    // https://developer.android.com/reference/androidx/test/uiautomator/UiSelector#textcontains
+    const addAutomaticallySelector = 'new UiSelector().className("android.widget.Button"). textContains("Add Automatically")'
+    $(`android=${addAutomaticallySelector}`).waitForDisplayed({timeout:DEFAULT_TIMEOUT});
+    $(`android=${addAutomaticallySelector}`).click();
 
     // // Terminating the app will remove the PWA from the emulator and when you try to open the
     // // PWA it will open an empty PWA/Chrome browser
     // driver.terminateApp('com.android.chrome');
 
     // Put the app to the background
-    // Android 10: This will automatically show the home screen
+    // Android 10:  This will automatically show the home screen and the icon focussed on the screen
+    // Android 9.0: This will automatically show the home screen and the icon focussed on the screen
+    // Android 8.1: This will automatically show the home screen and the icon focussed on the screen
     driver.background(-1);
 }
 
@@ -178,7 +242,7 @@ function openPwa(){
         // Need to get the webviews that we can use
         const chromeWebviews = contexts
           .filter((wv) => wv.webview === 'WEBVIEW_chrome')[0].pages
-          .filter((wv) => wv.type ==='page' && wv.title.includes('Swag Labs') && wv.id.length > 1);
+          .filter((wv) => wv.type ==='page' && wv.title.includes('Swag Labs') && wv.id !== '0');
 
         console.log('chromeWebviews:', chromeWebviews);
 
