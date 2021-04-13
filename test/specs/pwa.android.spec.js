@@ -1,6 +1,6 @@
 const DEFAULT_TIMEOUT = 15000;
 
-describe('An Android PWA', () => {
+describe('The Sauce Swag Labs Android PWA', () => {
 
     // Can't start the activity, it's not allowed
     // Activity: org.chromium.chrome.browser.webapps.WebappActivity
@@ -50,6 +50,7 @@ describe('An Android PWA', () => {
  * Store the PWA on the home screen
  */
 function storeAndroidPwa(){
+    let installThroughMenu = false;
     // Open Chrome
     // Go to url
     // Wait for loaded
@@ -80,27 +81,51 @@ function storeAndroidPwa(){
     // accessibility id   =   More options
     // xpath              =   //android.widget.ImageButton[@content-desc="More options"]
     ////////////////////////////////////////////////////////////////////////////////////
-    $('~More options').click();
+    // Android 7.1
+    // accessibility id   =   More options
+    // xpath              =   //android.widget.ImageButton[@content-desc="More options"]
+    ////////////////////////////////////////////////////////////////////////////////////
+    try {
+      const backupAddButtonSelector = 'new UiSelector().className("android.widget.Button").textContains("Add Swag Labs to")'
+      $(`android=${backupAddButtonSelector}`).waitForDisplayed({timeout:2500});
+      $(`android=${backupAddButtonSelector}`).click();
+    } catch (ign){
+      // This is a backup if the banner is not shown
+      $('~More options').click();
+      installThroughMenu = true;
+    }
 
-    // Click on add to home
-    ////////////////////////////////////////////////////////////////////////////////////
-    // Android 11
-    // accessibility id   =   Add to Home screen
-    // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
-    ////////////////////////////////////////////////////////////////////////////////////
-    // Android 10
-    // accessibility id   =   Add to Home screen
-    // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
-    ////////////////////////////////////////////////////////////////////////////////////
-    // Android 10
-    // accessibility id   =   Add to Home screen
-    // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
-    ////////////////////////////////////////////////////////////////////////////////////
-    // Android 8.1
-    // accessibility id   =   Add to Home screen
-    // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
-    ////////////////////////////////////////////////////////////////////////////////////
-    $('~Add to Home screen').click();
+    if (installThroughMenu) {
+      // Click on add to home
+      ////////////////////////////////////////////////////////////////////////////////////
+      // Android 11
+      // accessibility id   =   Add to Home screen
+      // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
+      ////////////////////////////////////////////////////////////////////////////////////
+      // Android 10
+      // accessibility id   =   Add to Home screen
+      // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
+      ////////////////////////////////////////////////////////////////////////////////////
+      // Android 10
+      // accessibility id   =   Add to Home screen
+      // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
+      ////////////////////////////////////////////////////////////////////////////////////
+      // Android 8.1
+      // accessibility id   =   Add to Home screen
+      // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
+      ////////////////////////////////////////////////////////////////////////////////////
+      // Android 7.1
+      // accessibility id   =   Add to Home screen
+      // xpath              =   //android.widget.TextView[@content-desc="Add to Home screen"]
+      ////////////////////////////////////////////////////////////////////////////////////
+      try {
+        $('~Add to Home screen').waitForDisplayed({timeout:2500});
+        $('~Add to Home screen').click();
+      } catch (ign) {
+        // On newer version of Android it's `Install App`
+        $('~Install app').click();
+      }
+    }
 
     // Wait for the pop-up
     // @TODO: we can change the name, but the cursor is in the wrong place
@@ -118,6 +143,9 @@ function storeAndroidPwa(){
     // Android 8.1
     // xpath    =   //android.widget.EditText[@resource-id="com.android.chrome:id/text"]
     ////////////////////////////////////////////////////////////////////////////////////
+    // Android 7.1
+    // Not possible
+    ////////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////////////
     // Android 11
@@ -132,12 +160,21 @@ function storeAndroidPwa(){
     // Android 8.1
     // xpath              =   //android.widget.Button[contains(@text, "ADD")]
     ////////////////////////////////////////////////////////////////////////////////////
-    // Diff between Android 11/10/9.0/8.1 is that it's `Add` vs. `ADD`
+    // Android 7.1
+    // xpath              =   //android.widget.Button[contains(@text, "ADD")]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Diff between Android 11/10/9.0/8.1/7.1 is that it's `Add` vs. `ADD`
     // textContains seems to be case-insensitive, although the docs say otherwise
     // https://developer.android.com/reference/androidx/test/uiautomator/UiSelector#textcontains
-    const addButtonSelector = 'new UiSelector().className("android.widget.Button").textContains("Add")'
-    $(`android=${addButtonSelector}`).waitForDisplayed({timeout:DEFAULT_TIMEOUT});
-    $(`android=${addButtonSelector}`).click();
+    try {
+      const addButtonSelector = 'new UiSelector().className("android.widget.Button").textContains("Add")'
+      $(`android=${addButtonSelector}`).waitForDisplayed({timeout:2500});
+      $(`android=${addButtonSelector}`).click();
+    } catch (ign) {
+      // On newer version of Android it's `Install App`
+      const backupAddHomeButtonSelector = 'new UiSelector().className("android.widget.Button").textContains("Install")'
+      $(`android=${backupAddHomeButtonSelector}`).click();
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////
     // Android 11
@@ -152,12 +189,19 @@ function storeAndroidPwa(){
     // Android 8.1
     // xpath    =   //android.widget.Button[contains(@text, "ADD AUTOMATICALLY")]
     ////////////////////////////////////////////////////////////////////////////////////
+    // Android 7.1
+    // NOT SHOWN!!!
+    ////////////////////////////////////////////////////////////////////////////////////
     // Diff between Android 11/10/9.0/8.1 is that it's `Add automatically` vs. `ADD AUTOMATICALLY`
     // textContains seems to be case-insensitive, although the docs say otherwise
     // https://developer.android.com/reference/androidx/test/uiautomator/UiSelector#textcontains
-    const addAutomaticallySelector = 'new UiSelector().className("android.widget.Button"). textContains("Add Automatically")'
-    $(`android=${addAutomaticallySelector}`).waitForDisplayed({timeout:DEFAULT_TIMEOUT});
-    $(`android=${addAutomaticallySelector}`).click();
+
+    // This screen is only shown with Android 8 (API Level 26) or higher
+    if (driver.capabilities.deviceApiLevel > 25) {
+        const addAutomaticallySelector = 'new UiSelector().className("android.widget.Button"). textContains("Add Automatically")'
+        $(`android=${addAutomaticallySelector}`).waitForDisplayed({timeout: DEFAULT_TIMEOUT});
+        $(`android=${addAutomaticallySelector}`).click();
+    }
 
     // // Terminating the app will remove the PWA from the emulator and when you try to open the
     // // PWA it will open an empty PWA/Chrome browser
@@ -236,15 +280,12 @@ function openPwa(){
     //   }
     // ]
 
-    const context = driver.waitUntil(() => {
+    driver.waitUntil(() => {
         const contexts = driver.execute('mobile:getContexts')
-        console.log('webviews = ', JSON.stringify(contexts, null, 2))
         // Need to get the webviews that we can use
         const chromeWebviews = contexts
           .filter((wv) => wv.webview === 'WEBVIEW_chrome')[0].pages
           .filter((wv) => wv.type ==='page' && wv.title.includes('Swag Labs') && wv.id !== '0');
-
-        console.log('chromeWebviews:', chromeWebviews);
 
         // No valid webview available, then retry
         if(chromeWebviews.length === 0){
@@ -264,6 +305,4 @@ function openPwa(){
         driver.switchContext('NATIVE_APP');
         return false;
     }, {timeout: DEFAULT_TIMEOUT});
-
-    console.log(`FINALLY SELECTING: ${JSON.stringify(context)}`);
 }

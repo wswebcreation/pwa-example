@@ -6,7 +6,10 @@
   "scripts": {
     "test.android": "wdio ./test/configs/wdio.mobile.chrome.local.conf.js",
     "test.ios": "wdio ./test/configs/wdio.mobile.safari.local.conf.js",
-    "test.sauce.sim.ios": "wdio test/configs/wdio.mobile.safari.sauce.sim.conf.js"
+    "test.sauce.emu.android.eu": "REGION=eu wdio test/configs/wdio.mobile.chrome.sauce.emu.conf.js",
+    "test.sauce.emu.android.us": "wdio test/configs/wdio.mobile.chrome.sauce.emu.conf.js",
+    "test.sauce.sim.ios.eu": "REGION=eu wdio test/configs/wdio.mobile.safari.sauce.sim.conf.js",
+    "test.sauce.sim.ios.us": "wdio test/configs/wdio.mobile.safari.sauce.sim.conf.js"
   },
   "keywords": [],
   "author": "",
