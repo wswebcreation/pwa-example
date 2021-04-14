@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test.android": "wdio ./test/configs/wdio.mobile.chrome.local.conf.js",
-    "test.ios": "wdio ./test/configs/wdio.mobile.safari.local.conf.js",
+    "test.local.android": "wdio ./test/configs/wdio.mobile.chrome.local.conf.js",
+    "test.local.ios": "wdio ./test/configs/wdio.mobile.safari.local.conf.js",
     "test.sauce.emu.android.eu": "REGION=eu wdio test/configs/wdio.mobile.chrome.sauce.emu.conf.js",
     "test.sauce.emu.android.us": "wdio test/configs/wdio.mobile.chrome.sauce.emu.conf.js",
     "test.sauce.sim.ios.eu": "REGION=eu wdio test/configs/wdio.mobile.safari.sauce.sim.conf.js",
@@ -19,12 +19,12 @@
     "@babel/core": "^7.13.15",
     "@babel/preset-env": "^7.13.15",
     "@babel/register": "^7.13.14",
-    "@wdio/appium-service": "^7.3.1",
-    "@wdio/cli": "^7.3.1",
-    "@wdio/jasmine-framework": "^7.3.1",
-    "@wdio/local-runner": "^7.3.1",
-    "@wdio/sauce-service": "^7.3.1",
-    "@wdio/spec-reporter": "^7.3.1",
-    "@wdio/sync": "^7.3.1"
+    "@wdio/appium-service": "^7.4.2",
+    "@wdio/cli": "^7.4.2",
+    "@wdio/jasmine-framework": "^7.4.2",
+    "@wdio/local-runner": "^7.4.2",
+    "@wdio/sauce-service": "^7.4.2",
+    "@wdio/spec-reporter": "^7.4.3",
+    "@wdio/sync": "^7.4.2"
   }
 }

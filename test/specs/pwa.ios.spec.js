@@ -1,6 +1,6 @@
 const DEFAULT_TIMEOUT = 15000;
 
-describe('An iOS PWA', () => {
+describe('The Sauce Swag Labs iOS PWA', () => {
     ////////////////////////////////////////////////////////////////////////////////////
     // iOS usage 2021-02-24 (https://developer.apple.com/support/app-store/)
     //  86% of all devices introduced in the last four years use iOS 14.
@@ -27,6 +27,9 @@ describe('An iOS PWA', () => {
         driver.deleteCookies('session-username')
         driver.execute('localStorage.clear()')
         driver.refresh();
+        // This is needed because on some devices the refresh is taking longer
+        // and it failed when putting data in the input fields
+        driver.pause(1000);
     });
 
     // afterEach(() => {
@@ -45,6 +48,7 @@ describe('An iOS PWA', () => {
          */
         $('#user-name').waitForDisplayed({timeout: DEFAULT_TIMEOUT});
         $('#user-name').addValue('standard_user');
+        // driver.pause(3000)
         $('#password').addValue('secret_sauce');
         $('#login-button').click();
         $('#inventory_container').waitForDisplayed({timeout: DEFAULT_TIMEOUT});
@@ -241,19 +245,39 @@ function openAddToHomeScreen(amount = 0) {
     ////////////////////////////////////////////////////////////////////////////////////
 
     if (!$('~Add to Home Screen').isDisplayed() && amount < 4) {
-        // @TODO: check if iOS 14 has this one
+        const platformVersion = parseInt(driver.capabilities.platformVersion)
+        let xStart, xEnd, yStart, yEnd;
         const listRectangles = driver.getElementRect($('~ActivityListView').elementId);
 
-        // The design of the screen is that it contains 2 equal rows,
-        // the options are in the second row so take the half of that meaning 0.75% of height
-        const y = listRectangles.y + Math.round(listRectangles.height * 0.75);
+        if (platformVersion < 13) {
+            // iOS 12 and lower have a row that has tiles. We need to swipe the first
+            // row of tiles from right to left to see if the button is there
+            // The design of the screen is that it contains 2 equal rows,
+            // the options are in the second row so take the half of that meaning 0.75% of height
+            // Swipe from right
+            xStart = listRectangles.width * 0.8;
+            yStart = listRectangles.y + Math.round(listRectangles.height * 0.75);
+            // to the left
+            xEnd = listRectangles.width * 0.2;
+            yEnd = listRectangles.y + Math.round(listRectangles.height * 0.75);
+        } else {
+            // iOS 13 + 14 have a new design. All the options are in a list in a card
+            // If it's not visible, then the cards needs to be dragged up
+
+            // Drag the card from half way of the screen
+            xStart = listRectangles.width / 2;
+            yStart = listRectangles.y + Math.round(listRectangles.height * 0.75);
+            // to the top
+            xEnd = listRectangles.width / 2;
+            yEnd = 0;
+        }
 
         driver.touchPerform([
             {
                 action: 'press',
                 options: {
-                    x: listRectangles.width * 0.8,
-                    y: y,
+                    x: xStart,
+                    y: yStart,
                 },
             },
             {
@@ -263,8 +287,8 @@ function openAddToHomeScreen(amount = 0) {
             {
                 action: 'moveTo',
                 options: {
-                    x: listRectangles.width * 0.2,
-                    y: y,
+                    x: xEnd,
+                    y: yEnd,
                 },
             },
             {
@@ -422,13 +446,11 @@ function openPwa() {
     //          "url":"https://www.smashingmagazine.com/"
     //      }
     // ]
-    const context = driver.waitUntil(() => {
+    driver.waitUntil(() => {
         const contexts = driver.execute('mobile:getContexts')
-        console.log('webviews = ', contexts)
         const swagLabsWebviews = contexts
             .filter((wv) => wv.title && wv.title.includes('Swag Labs'));
 
-        console.log('swagLabsWebviews:', swagLabsWebviews.map((wv) => wv.id));
 
         // Wait for the webview to be loaded
         // @TODO: determine if this is needed
@@ -443,10 +465,6 @@ function openPwa() {
         driver.switchContext('NATIVE_APP');
         return false;
     }, {timeout: DEFAULT_TIMEOUT});
-
-    console.log(`FINALLY SELECTING: ${JSON.stringify(context)}`);
-    // we should already be in the context, but this won't hurt
-    driver.switchContext(context.id);
 }
 
 
