@@ -13,19 +13,14 @@ config.specs = [
 // ============
 config.capabilities = [
   {
-    deviceName: 'iPhone XS Simulator',
-    platformName: 'iOS',
-    platformVersion: '12.4',
-    orientation: 'PORTRAIT',
-    browserName: 'safari',
-    build,
-  },
-  {
     deviceName: 'iPhone 11 Simulator',
     platformName: 'iOS',
     platformVersion: '14.3',
     orientation: 'PORTRAIT',
     browserName: 'safari',
+    // If you want to handle the delete of the PWA yourself then put this to false.
+    // You then need to adjust the removePwa methods, see the comments in the iOS code.
+    autoAcceptAlerts: true,
     build,
   },
   {
@@ -34,6 +29,20 @@ config.capabilities = [
     platformVersion: '13.4',
     orientation: 'PORTRAIT',
     browserName: 'safari',
+    // If you want to handle the delete of the PWA yourself then put this to false.
+    // You then need to adjust the removePwa methods, see the comments in the iOS code.
+    autoAcceptAlerts: true,
+    build,
+  },
+  {
+    deviceName: 'iPhone XS Simulator',
+    platformName: 'iOS',
+    platformVersion: '12.4',
+    orientation: 'PORTRAIT',
+    browserName: 'safari',
+    // If you want to handle the delete of the PWA yourself then put this to false.
+    // You then need to adjust the removePwa methods, see the comments in the iOS code.
+    autoAcceptAlerts: true,
     build,
   },
 ];
