@@ -18,10 +18,7 @@ config.capabilities = [
     platformVersion: '14.2',
     orientation: 'PORTRAIT',
     browserName: 'safari',
-    maxInstances: 1,
     noReset: true,
-    // Check if this is needed if we start in the Webview context
-    includeSafariInWebviews: true,
   },
   // {
   //   deviceName: 'iPhone 8',
@@ -31,8 +28,6 @@ config.capabilities = [
   //   browserName: 'safari',
   //   maxInstances: 1,
   //   noReset: true,
-  //   // Check if this is needed if we start in the Webview context
-  //   includeSafariInWebviews: true,
   // },
   // {
   //   deviceName: 'iPhone 8',
@@ -42,8 +37,6 @@ config.capabilities = [
   //   browserName: 'safari',
   //   maxInstances: 1,
   //   noReset: true,
-  //   // Check if this is needed if we start in the Webview context
-  //   includeSafariInWebviews: true,
   // },
   // {
   //   deviceName: 'iPhone 11',
@@ -53,8 +46,6 @@ config.capabilities = [
   //   browserName: 'safari',
   //   maxInstances: 1,
   //   noReset: true,
-  //   // Check if this is needed if we start in the Webview context
-  //   includeSafariInWebviews: true,
   // },
   // {
   //   deviceName: 'iPhone XS',
@@ -64,8 +55,6 @@ config.capabilities = [
   //   browserName: 'safari',
   //   maxInstances: 1,
   //   noReset: true,
-  //   // Check if this is needed if we start in the Webview context
-  //   includeSafariInWebviews: true,
   // },
 ];
 

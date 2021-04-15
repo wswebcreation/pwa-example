@@ -48,8 +48,8 @@ describe('The Sauce Swag Labs iOS PWA', () => {
          */
         $('#user-name').waitForDisplayed({timeout: DEFAULT_TIMEOUT});
         $('#user-name').addValue('standard_user');
-        // driver.pause(3000)
         $('#password').addValue('secret_sauce');
+        // It seems that this button can't be clicked on iOS 12 with Appium 1.13
         $('#login-button').click();
         $('#inventory_container').waitForDisplayed({timeout: DEFAULT_TIMEOUT});
 
@@ -124,73 +124,19 @@ function storeIosPwa() {
     // -ios predicate string(beta)  =   name == "ActivityListView"
     // -ios class chain(beta)       =   **/XCUIElementTypeOther[`name == "ActivityListView"`]
     ////////////////////////////////////////////////////////////////////////////////////
-    const selector = `type == 'XCUIElementTypeCollectionView'`
-    $(`-ios predicate string:${selector}`).waitForDisplayed({timeout: DEFAULT_TIMEOUT});
+    // iOS 12 has a different element to wait for
+    const platformVersion = parseInt(driver.capabilities.platformVersion);
+    let selector
 
-    // Swipe the card up, automate that for:
-    // - iOS 14/13/12
+    if(platformVersion < 13){
+        selector = '~ActivityListView'
+    } else {
+        selector = `-ios predicate string:type == 'XCUIElementTypeCollectionView'`;
+    }
+    $(selector).waitForDisplayed({timeout: DEFAULT_TIMEOUT});
 
-    // Right to left swipe for the "Add to Home Screen"
-    openAddToHomeScreen();
-
-    // A new screen will be shown
-    // Wait for ~Add and press it
-
-    ////////////////////////////////////////////////////////////////////////////////////
-    // iOS 14
-    // accessibility id             =   Add
-    // -ios predicate string(beta)  =   label == "Add"
-    // -ios class chain(beta)       =   **/XCUIElementTypeButton[`label == "Add"`]
-    ////////////////////////////////////////////////////////////////////////////////////
-    // iOS 13
-    // accessibility id             =   Add
-    // -ios predicate string(beta)  =   label == "Add"
-    // -ios class chain(beta)       =   **/XCUIElementTypeButton[`label == "Add"`]
-    ////////////////////////////////////////////////////////////////////////////////////
-    // iOS 12
-    // accessibility id             =   Add
-    // -ios predicate string(beta)  =   label == "Add"
-    // -ios class chain(beta)       =   **/XCUIElementTypeButton[`label == "Add"`]
-    ////////////////////////////////////////////////////////////////////////////////////
-
-    $('~Add').waitForDisplayed({timeout: DEFAULT_TIMEOUT});
-    // @TODO: We skipped the step to change the name of the app, but here are the selectors
-    ////////////////////////////////////////////////////////////////////////////////////
-    // The clear field
-    ////////////////////////////////////////////////////////////////////////////////////
-    // iOS 14
-    // accessibility id             =
-    // -ios predicate string(beta)  =
-    // -ios class chain(beta)       =
-    ////////////////////////////////////////////////////////////////////////////////////
-    // iOS 13
-    // accessibility id             =   Clear text
-    // -ios predicate string(beta)  =   label == "Clear text"
-    // -ios class chain(beta)       =   **/XCUIElementTypeButton[`label == "Clear text"`]
-    ////////////////////////////////////////////////////////////////////////////////////
-    // iOS 12
-    // accessibility id             =   Clear text
-    // -ios predicate string(beta)  =   label == "Clear text"
-    // -ios class chain(beta)       =   **/XCUIElementTypeButton[`label == "Clear text"`]
-    ////////////////////////////////////////////////////////////////////////////////////
-    // The text field
-    ////////////////////////////////////////////////////////////////////////////////////
-    // iOS 14
-    // accessibility id             =
-    // -ios predicate string(beta)  =
-    // -ios class chain(beta)       =
-    ////////////////////////////////////////////////////////////////////////////////////
-    // iOS 13
-    // accessibility id             =   -
-    // -ios predicate string(beta)  =   type == "XCUIElementTypeTextField"
-    // -ios class chain(beta)       =   -
-    ////////////////////////////////////////////////////////////////////////////////////
-    // iOS 12
-    // accessibility id             =   -
-    // -ios predicate string(beta)  =   type == "XCUIElementTypeTextField"
-    // -ios class chain(beta)       =   -
-    ////////////////////////////////////////////////////////////////////////////////////
-    $('~Add').click();
+    // handle icon to home screen
+    openAddToHomeScreenModal();
 
     ////////////////////////////////////////////////////////////////////////////////////
     // iOS 14
@@ -221,7 +167,7 @@ function storeIosPwa() {
  *
  * @param {number} amount The amount of scrolls
  */
-function openAddToHomeScreen(amount = 0) {
+function openAddToHomeScreenModal(amount = 0) {
     ////////////////////////////////////////////////////////////////////////////////////
     // iOS 14
     // accessibility id             =   -
@@ -299,11 +245,69 @@ function openAddToHomeScreen(amount = 0) {
         console.log('############\nSwipped and will pause now\n############\n')
         driver.pause(1000)
 
-        openAddToHomeScreen(amount + 1);
+        openAddToHomeScreenModal(amount + 1);
     }
 
     // If found click on it
     $('~Add to Home Screen').click();
+
+    // A new modal / card will be shown
+    // Wait for ~Add and press it
+    ////////////////////////////////////////////////////////////////////////////////////
+    // iOS 14
+    // accessibility id             =   Add
+    // -ios predicate string(beta)  =   label == "Add"
+    // -ios class chain(beta)       =   **/XCUIElementTypeButton[`label == "Add"`]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // iOS 13
+    // accessibility id             =   Add
+    // -ios predicate string(beta)  =   label == "Add"
+    // -ios class chain(beta)       =   **/XCUIElementTypeButton[`label == "Add"`]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // iOS 12
+    // accessibility id             =   Add
+    // -ios predicate string(beta)  =   label == "Add"
+    // -ios class chain(beta)       =   **/XCUIElementTypeButton[`label == "Add"`]
+    ////////////////////////////////////////////////////////////////////////////////////
+
+    $('~Add').waitForDisplayed({timeout: DEFAULT_TIMEOUT});
+    // @TODO: We skipped the step to change the name of the app, but here are the selectors
+    ////////////////////////////////////////////////////////////////////////////////////
+    // The clear field
+    ////////////////////////////////////////////////////////////////////////////////////
+    // iOS 14
+    // accessibility id             =
+    // -ios predicate string(beta)  =
+    // -ios class chain(beta)       =
+    ////////////////////////////////////////////////////////////////////////////////////
+    // iOS 13
+    // accessibility id             =   Clear text
+    // -ios predicate string(beta)  =   label == "Clear text"
+    // -ios class chain(beta)       =   **/XCUIElementTypeButton[`label == "Clear text"`]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // iOS 12
+    // accessibility id             =   Clear text
+    // -ios predicate string(beta)  =   label == "Clear text"
+    // -ios class chain(beta)       =   **/XCUIElementTypeButton[`label == "Clear text"`]
+    ////////////////////////////////////////////////////////////////////////////////////
+    // The text field
+    ////////////////////////////////////////////////////////////////////////////////////
+    // iOS 14
+    // accessibility id             =
+    // -ios predicate string(beta)  =
+    // -ios class chain(beta)       =
+    ////////////////////////////////////////////////////////////////////////////////////
+    // iOS 13
+    // accessibility id             =   -
+    // -ios predicate string(beta)  =   type == "XCUIElementTypeTextField"
+    // -ios class chain(beta)       =   -
+    ////////////////////////////////////////////////////////////////////////////////////
+    // iOS 12
+    // accessibility id             =   -
+    // -ios predicate string(beta)  =   type == "XCUIElementTypeTextField"
+    // -ios class chain(beta)       =   -
+    ////////////////////////////////////////////////////////////////////////////////////
+    $('~Add').click();
 }
 
 /**
@@ -450,7 +454,6 @@ function openPwa() {
         const contexts = driver.execute('mobile:getContexts')
         const swagLabsWebviews = contexts
             .filter((wv) => wv.title && wv.title.includes('Swag Labs'));
-
 
         // Wait for the webview to be loaded
         // @TODO: determine if this is needed
