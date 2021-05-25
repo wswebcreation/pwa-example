@@ -86,7 +86,7 @@ function storeAndroidPwa(){
     // xpath              =   //android.widget.ImageButton[@content-desc="More options"]
     ////////////////////////////////////////////////////////////////////////////////////
     try {
-      const backupAddButtonSelector = 'new UiSelector().className("android.widget.Button").textContains("Add Swag Labs to")'
+      const backupAddButtonSelector = 'new UiSelector().className("android.widget.Button").textContains("Add Swag Labs to")';
       $(`android=${backupAddButtonSelector}`).waitForDisplayed({timeout:2500});
       $(`android=${backupAddButtonSelector}`).click();
     } catch (ign){
@@ -196,11 +196,15 @@ function storeAndroidPwa(){
     // textContains seems to be case-insensitive, although the docs say otherwise
     // https://developer.android.com/reference/androidx/test/uiautomator/UiSelector#textcontains
 
-    // This screen is only shown with Android 8 (API Level 26) or higher
-    if (driver.capabilities.deviceApiLevel > 25) {
-        const addAutomaticallySelector = 'new UiSelector().className("android.widget.Button"). textContains("Add Automatically")'
-        $(`android=${addAutomaticallySelector}`).waitForDisplayed({timeout: DEFAULT_TIMEOUT});
-        $(`android=${addAutomaticallySelector}`).click();
+    // This screen is only shown with Android 8 (API Level 26) or higher, but don't let it fail if it's not there
+    try {
+      if (driver.capabilities.deviceApiLevel > 25) {
+          const addAutomaticallySelector = 'new UiSelector().className("android.widget.Button"). textContains("Add Automatically")'
+          $(`android=${addAutomaticallySelector}`).waitForDisplayed({timeout: DEFAULT_TIMEOUT});
+          $(`android=${addAutomaticallySelector}`).click();
+      }
+    } catch (ign){
+      // do nothing
     }
 
     // // Terminating the app will remove the PWA from the emulator and when you try to open the
@@ -219,12 +223,8 @@ function storeAndroidPwa(){
  */
 function openPwa(){
     // Wait for the icon on the home screen
-    ////////////////////////////////////////////////////////////////////////////////////
-    // Android 10
-    // accessibility id   =   Swag Labs
-    // xpath              =   //android.widget.TextView[@content-desc="Swag Labs"]
-    ////////////////////////////////////////////////////////////////////////////////////
-    $('~Swag Labs').waitForDisplayed({timeout:DEFAULT_TIMEOUT});
+    driver.pause(2000);
+    findPWAOnScreen();
     $('~Swag Labs').click();
 
     // There is only a `NATIVE_APP|CHROMIUM` context
@@ -305,4 +305,49 @@ function openPwa(){
         driver.switchContext('NATIVE_APP');
         return false;
     }, {timeout: DEFAULT_TIMEOUT});
+}
+
+/**
+ * Find the icon on the screen, if it's not there then swipe from bottom to top
+ * and hopefully it will be in the apps screen
+ */
+function findPWAOnScreen(amount = 0) {
+  ////////////////////////////////////////////////////////////////////////////////////
+  // Android 10
+  // accessibility id   =   Swag Labs
+  // xpath              =   //android.widget.TextView[@content-desc="Swag Labs"]
+  ////////////////////////////////////////////////////////////////////////////////////
+  if (!$('~Swag Labs').isDisplayed() && amount < 2) {
+    const {height, width} = driver.getWindowSize();
+    const yStart = height - height / 4;
+    const yEnd = 0;
+    const x = width/2;
+    driver.touchPerform([
+      {
+        action: 'press',
+        options: {
+          x: x,
+          y: yStart,
+        },
+      },
+      {
+        action: 'wait',
+        options: {ms: 1000},
+      },
+      {
+        action: 'moveTo',
+        options: {
+          x: x,
+          y: yEnd,
+        },
+      },
+      {
+        action: 'release',
+      },
+    ]);
+
+    // Wait a second for the swipe to be done
+    driver.pause(1000);
+    findPWAOnScreen(amount + 1);
+  }
 }

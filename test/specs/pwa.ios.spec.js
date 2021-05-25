@@ -311,7 +311,7 @@ function openAddToHomeScreenModal(amount = 0) {
     ]);
 
     // Wait a second for the swipe to be done
-    driver.pause(1000)
+    driver.pause(1000);
     openAddToHomeScreenModal(amount + 1);
   }
 
