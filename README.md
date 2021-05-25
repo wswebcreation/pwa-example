@@ -1,6 +1,9 @@
 # PWA Example
 This is a PWA example repo on how to test an installable PWA with Appium
 
+> **NOTE:** This repo uses WDIO V7 together with Sync Mode. Make sure you are on NodeJS 14. Sync Mode got broken
+> on NodeJS 16
+
 ## To use
 1. clone the project to your machine
 1. `cd pwa-example`
